@@ -6,7 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # VSCode
-./vscode
+.vscode/
 
 # Runtime data
 pids
