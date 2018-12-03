@@ -15,4 +15,4 @@ Top level of this project houses folders named for the dates puzzles were releas
 advent-of-code/14/skat/**/*
 ```
 
-_Thanks for Contributing! –Skat_
+_Thanks for Contributing! –🦑_
