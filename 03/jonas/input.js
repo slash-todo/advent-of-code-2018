@@ -14,9 +14,9 @@ module.exports = input.map(line => {
     .map(str => Number(str));
   return {
     id,
-    left, // inclusive
-    right: left + width, // exclusive
-    top, // inclusive
-    bottom: top + height // exclusive
+    left,
+    right: left + width - 1,
+    top,
+    bottom: top + height - 1
   };
 });
