@@ -1,47 +1,45 @@
 console.clear();
-const inputs = require('./input.js');
+const idList = require('./input.js');
 // const inputs = ['bababc'];
-let ticker = 0;
+let doubles = 0;
+let triples = 0;
 
-const getCheckSum = list => {
-    let results = { twice: 0, thrice: 0 };
-    list.forEach(item => {
-        const letterSequence = item.split('').sort();
-        const _findTwosOrThrees = (string, results) => {
-            let twiceFlag = false;
-            let thriceFlag = false;
-            let buffer = [string.shift()];
-            while (string.length > 0 && (!twiceFlag || !thriceFlag)) {
-                // pull first letter from stack
-                const letter = string.shift();
+idList.forEach((id, index) => {
+    const sortedID = id.split('').sort();
+    let tripleFlag = false;
+    let doubleFlag = false;
+    for (let i = 0; i < sortedID.length; i++) {
+        const z = sortedID[i - 1];
+        const a = sortedID[i];
+        const b = sortedID[i + 1];
 
-                // when there is a switch in letter value
-                if (buffer[0] !== letter) {
-                    if (buffer.length === 2 && !twiceFlag) {
-                        twiceFlag = true;
-                    } else if (buffer.length === 3 && !thriceFlag) {
-                        thriceFlag = true;
-                    }
-                    buffer = [letter];
-                } else {
-                    buffer.push(letter);
-                }
+        // if both flags are tripped, the work is done
+        if (doubleFlag && tripleFlag) {
+            continue;
+        }
+
+        // only check pairs on the first character
+        if (a === b && a !== z) {
+            // if a === b, introduce c and d
+            const c = sortedID[i + 2];
+            const d = sortedID[i + 3];
+            // find triples
+            if (a === b && a === c && a !== d && !tripleFlag) {
+                console.log(z, a, b, c, d, 'TRIPLE');
+                triples += 1;
+                tripleFlag = true;
             }
-            ticker++;
-            if (twiceFlag) results.twice += 1;
-            if (thriceFlag) results.thrice += 1;
-            console.log(
-                `
-Ticker: ${ticker}
-Flags: [${twiceFlag ? '2' : ' '}|${thriceFlag ? '3' : ' '}]
-Results: (2)-${results.twice} | (3)-${results.thrice}
-Current Checksum: ${results.twice * results.thrice}`
-            );
-        };
+            // find doubles
+            else if (a === b && a !== c && !doubleFlag) {
+                console.log(z, a, b, c, 'DOUBLE');
+                doubles += 1;
+                doubleFlag = true;
+            }
+        }
+    }
+    // loop complete, reset the flags
+    tripleFlag = false;
+    doubleFlag = false;
+});
 
-        _findTwosOrThrees(letterSequence, results);
-    });
-    return results.twice * results.thrice;
-};
-
-console.log(getCheckSum(inputs));
+console.log(doubles * triples);
