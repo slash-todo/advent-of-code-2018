@@ -10,7 +10,6 @@ const regex = /\[(\d+)-(\d+)-(\d+) (\d+):(\d+)\] ((Guard #(\d+) (begins shift))|
 
 let guardId;
 const result = input.sort().map(line => {
-  console.log(line);
   let [
     ,
     year,
