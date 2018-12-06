@@ -15,7 +15,6 @@ const generateReagents = () => {
 const reagents = generateReagents();
 
 const react = (polymer, reagents) => {
-    let ticker = 0;
     let volatile = true;
     let lastLength = polymer.length;
     while (volatile) {
@@ -25,11 +24,26 @@ const react = (polymer, reagents) => {
         // if polymer length is the same, reactions are finished
         volatile = polymer.length === lastLength ? false : true;
         lastLength = polymer.length;
-        ticker++;
-        ticker % 1000 === 0 ? console.log(ticker++) : null;
     }
     return polymer;
 };
 
-let reactedPolymer = react(polymer, reagents);
-console.log(reactedPolymer.length);
+const removeReagentAndReact = (polymer, reagents) => {
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    const regexSet = alphabet.map(letter => {
+        const a = new RegExp(letter, 'g');
+        const b = new RegExp(letter.toUpperCase(), 'g');
+        return [a, b];
+    });
+    let min = polymer.length;
+    regexSet.forEach(regex => {
+        let clone = polymer;
+        clone = clone.replace(regex[0], '');
+        clone = clone.replace(regex[1], '');
+        clone = react(clone, reagents);
+        min = min < clone.length ? min : clone.length;
+    });
+    return min;
+};
+
+console.log(removeReagentAndReact(polymer, reagents));
