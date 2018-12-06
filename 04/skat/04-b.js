@@ -94,8 +94,8 @@ const findHighestSleepAmount = sleepPatterns => {
     let guardResults = [];
     for (let item of sleepPatterns[Symbol.iterator]()) {
         // get greatest number
-        const total = item[1].reduce((a, b) => a + b);
-        guardResults.push([item[0], total]);
+        const max = item[1].reduce((a, b) => (a > b ? a : b));
+        guardResults.push([item[0], max]);
     }
     return guardResults.reduce((a, b) => (a[1] > b[1] ? a : b));
 };
@@ -104,8 +104,7 @@ const maxSleeper = findHighestSleepAmount(sleepPatterns);
 
 const findMaxSleeperMinute = (maxSleeper, sleepPatterns) => {
     let minuteLog = sleepPatterns.get(maxSleeper[0]);
-    let target = Math.max(...minuteLog);
-    return minuteLog.indexOf(target);
+    return minuteLog.indexOf(maxSleeper[1]);
 };
 
 const maxSleeperMinute = findMaxSleeperMinute(maxSleeper, sleepPatterns);
