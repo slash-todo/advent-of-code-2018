@@ -2,22 +2,35 @@ const Point = require('./point.js');
 
 class Field {
     constructor(locations) {
-        this.points = this._initLocations(locations);
-        this.minX = Math.min(...this.points.map(point => point.x));
-        this.minY = Math.min(...this.points.map(point => point.y));
-        this.maxX = Math.max(...this.points.map(point => point.x));
-        this.maxY = Math.max(...this.points.map(point => point.y));
-        this.width = this.maxX - this.minX;
-        this.height = this.maxY - this.minY;
+        this.locations = this._initLocations(locations);
+        this.minX = Math.min(...this.locations.map(locale => locale.x));
+        this.minY = Math.min(...this.locations.map(locale => locale.y));
+        this.maxX = Math.max(...this.locations.map(locale => locale.x));
+        this.maxY = Math.max(...this.locations.map(locale => locale.y));
+        this.points = this._initPoints(locations);
+        this.width = this.maxX - this.minX + 1;
+        this.height = this.maxY - this.minY + 1;
         this.grid = new Array(this.width * this.height).fill(null);
         this._plotLocations();
     }
 
-    _initLocations(locations) {
+    _initPoints(locations) {
         let ticker = 0;
         return locations.map(point => {
             const arr = point.split(', ');
-            return new Point(ticker++, Number(arr[0]), Number(arr[1]), this);
+            return new Point(
+                ticker++,
+                Number(arr[0]) - this.minX,
+                Number(arr[1]) - this.minY,
+                this
+            );
+        });
+    }
+
+    _initLocations(locations) {
+        return locations.map(locale => {
+            const arr = locale.split(', ');
+            return { x: Number(arr[0]), y: Number(arr[1]) };
         });
     }
 
@@ -43,35 +56,53 @@ class Field {
     }
 
     _getNearestPoint(position) {
-        const lowestDistance = Math.min(
+        const minDistance = Math.min(
             ...this.points.map(point => this._getDistance(position, point))
         );
         const closest = this.points.filter(
-            point => lowestDistance === this._getDistance(position, point)
+            point => minDistance === this._getDistance(position, point)
         );
-
-        return closest.length === 1 ? closest[0] : 'multiple';
+        return closest.length === 1 ? closest[0].id : 'multiple';
     }
 
     getLargestArea() {
         // check for the closest point in each grid cell
-        this.grid.map((cell, index) => {
+        this.grid = this.grid.map((cell, index) => {
             if (cell instanceof Point) {
                 return cell;
             }
             return this._getNearestPoint(this._indexToXY(index));
         });
-        const multiples = this.grid.filter(cell => cell === 'multiple');
-
-        console.log('Multiples: ' + multiples.length);
-        this.points.forEach(point => {
-            const matches = this.grid.filter(cell => cell === point.id);
-            console.log(
-                `[${point.id.toString().padStart(2, '0')}] Matches: ${
-                    matches.length
-                }`
+        const _removeInfinitePoints = () => {
+            const _getValue = pt => {
+                return pt instanceof Point ? pt.id : pt;
+            };
+            let infinitePoints = [
+                0,
+                this.width - 1,
+                this.width * (this.height - 1),
+                this.width * this.height - 1
+            ];
+            const removalTargets = infinitePoints.map(pt =>
+                _getValue(this.grid[pt])
             );
-        });
+            const eligiblePoints = this.points
+                .filter(pt => {
+                    return !removalTargets.includes(pt.id);
+                })
+                .map(pt => pt.id);
+            return eligiblePoints;
+        };
+
+        const largestArea = Math.max(
+            ..._removeInfinitePoints().map(pt => {
+                return this.grid.filter(cell => cell === pt).length + 1;
+            })
+        );
+        // eligiblePoints = eligiblePoints.map(pt => {
+        //     return pt.id;
+        // });
+        return largestArea;
     }
 }
 
