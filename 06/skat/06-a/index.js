@@ -1,6 +1,6 @@
 console.clear();
 const Field = require('./field.js');
-const locations = require('./input.js');
+const locations = require('../input.js');
 // let locations = ['1, 1', '1, 6', '8, 3', '3, 4', '5, 5', '8, 9'];
 
 const field = new Field(locations);
@@ -30,6 +30,6 @@ const visualizeGrid = () => {
     debugger;
 };
 
-visualizeGrid();
+// visualizeGrid();
 
 // debugger;

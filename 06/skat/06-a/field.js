@@ -77,18 +77,30 @@ class Field {
             const _getValue = pt => {
                 return pt instanceof Point ? pt.id : pt;
             };
-            let infinitePoints = [
-                0,
-                this.width - 1,
-                this.width * (this.height - 1),
-                this.width * this.height - 1
-            ];
-            const removalTargets = infinitePoints.map(pt =>
-                _getValue(this.grid[pt])
-            );
+            let outerRing = this.grid
+                // get a list of each unique value in the outer ring
+                // that are not strings (i.e. multiples)
+                .filter((cell, index) => {
+                    const cords = this._indexToXY(index);
+                    return (
+                        (cords.y === 0 ||
+                            cords.y === this.height - 1 ||
+                            cords.x === 0 ||
+                            cords.x === this.width - 1) &&
+                        typeof cell !== 'string'
+                    );
+                })
+                // filter out the duplicates
+                .filter(function(cell, index, self) {
+                    return index === self.indexOf(cell);
+                })
+                // convert everything to numbers, no Points
+                .map(cell => {
+                    return _getValue(cell);
+                });
             const eligiblePoints = this.points
                 .filter(pt => {
-                    return !removalTargets.includes(pt.id);
+                    return !outerRing.includes(pt.id);
                 })
                 .map(pt => pt.id);
             return eligiblePoints;
