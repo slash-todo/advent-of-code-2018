@@ -116,6 +116,18 @@ class Field {
         // });
         return largestArea;
     }
+
+    sumDistanceToAllPoints(threshold) {
+        this.grid = this.grid.map((cell, index) => {
+            const cords = this._indexToXY(index);
+            let dist = 0;
+            this.points.forEach(pt => {
+                dist += this._getDistance(cords, pt);
+            });
+            return dist < threshold ? dist : null;
+        });
+        return this.grid.filter(cell => !!cell).length;
+    }
 }
 
 module.exports = Field;

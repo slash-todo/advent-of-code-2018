@@ -1,10 +1,12 @@
 console.clear();
+const startTime = Date.now();
+
 const Field = require('../field.js');
-// const locations = require('../input.js');
-let locations = ['1, 1', '1, 6', '8, 3', '3, 4', '5, 5', '8, 9'];
+const locations = require('../input.js');
+// let locations = ['1, 1', '1, 6', '8, 3', '3, 4', '5, 5', '8, 9'];
 
 const field = new Field(locations);
-console.log(field.getLargestArea());
+console.log(field.sumDistanceToAllPoints(10000));
 
 const visualizeGrid = () => {
     let string = '';
@@ -12,10 +14,13 @@ const visualizeGrid = () => {
         let entry = '';
 
         // print the entry
-        if (typeof cell === 'object') {
-            entry = cell.id.toString().padStart(2, '░');
+        if (typeof cell === 'object' && !!cell) {
+            entry = String(cell.id).padStart(2, '░');
         } else if (cell === 'multiple') {
             entry = '++';
+        } else if (typeof cell === 'object' && !cell) {
+            // null
+            entry = '..';
         } else {
             entry = cell.toString().padStart(2, '0');
         }
@@ -26,10 +31,8 @@ const visualizeGrid = () => {
             string = string + '\n';
         }
     });
-    console.log(string);
-    debugger;
+    console.log('\n' + string);
+    // debugger;
 };
 
-visualizeGrid();
-
-// debugger;
+// visualizeGrid();
