@@ -9,22 +9,22 @@ with open("puzzleinput.txt", "r") as file:
 # Although I do have some misgivings about immutable strings and garbage collection
 
 def is_match(x, y):
-    if x.lower() == y.lower() and x != y: # Abort here if they are the same letter, or identical.
+    if x.lower() == y.lower() and x != y: # Abort here if they are not the same letter, or identical.
         if x.islower != y.isupper() or x.isupper() != y.islower(): # They have opposite case
                 return True
     return False
 
 def main(reagents):
     l_index = 0
-    while l_index < len(reagents)-1: 
+    while l_index < len(reagents)-1: # bug candidate 1?
         is_matching = is_match(reagents[l_index], reagents[l_index+1])        
         if is_matching:
             if l_index == 0:
-                reagents = reagents[l_index+2:] # First item 
+                reagents = reagents[l_index+2:] # First item. bug candidate 2? 
                 l_index += 1 
             else: # Remove the collpased section from string, and move back one index
                 reagents = reagents[:l_index] + reagents[l_index+2:]
-                l_index -= 3
+                l_index -= 2
         l_index += 1 
     return reagents
 
@@ -34,7 +34,6 @@ reagents = main(reagents)
 
 
 # Part 2
-size_per_letter = {}
 smallest = 50000
 for letter in range(ord('a'), ord('z')+1):
     reduced_reagent = reagents.replace(chr(letter).lower(), "").replace(chr(letter).upper(), "")
