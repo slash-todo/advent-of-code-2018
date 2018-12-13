@@ -40,6 +40,7 @@ while True:
 print("Part 1 answer: ", execution_order)
 
 def Test_Driven_Development_Dot_Exe(execution_order):
+    """ This is TDD at it's finest and will let me optimize the code """
     if "GKCNPTVHIRYDUJMSXFBQLOAEWZ" == execution_order:
         print("Good job!")
     else:
